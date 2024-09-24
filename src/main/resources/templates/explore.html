@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Explore - Petify</title>
-    <link rel="stylesheet" th:href="@{/css/navbar.css}"> 
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
     <style>
         /* Global Styles */
         body {
@@ -123,22 +123,24 @@
     <footer>&copy; 2024 Petify. All rights reserved.</footer>
 
     <!-- Populate videos array from Thymeleaf -->
+    <!-- Lazy loading videos -->
     <script th:inline="javascript">
-        var videos = /*[[${videos}]]*/ [];
+        var videos = /[[${videos}]]/ [];
     </script>
 
     <script src="/js/navbar.js"></script>
-    
+
     <script th:inline="javascript">
     /*<![CDATA[*/
     var videos = /*[[${videos}]]*/ [];
     /*]]>*/
-</script>
+    </script>
 
 <script>
     const videoElement = document.getElementById('current-video');
     const descriptionElement = document.getElementById('current-description');
     let currentIndex = 0;
+    const loadedVideos = {}; // Track loaded videos
 
     // Function to load the video dynamically from the backend
     function loadVideo(index) {
@@ -150,14 +152,17 @@
         const video = videos[index];
         const videoUrl = `/videos/${video.id}`; // Dynamic video URL from your database
         console.log("Loading video from URL: " + videoUrl);
-        
-        // Set video src and load it
-        videoElement.src = videoUrl;
-        descriptionElement.textContent = video.description;
 
-        // Play the video automatically
-        videoElement.play().catch(err => console.error("Error playing video: ", err));
-    }
+         // Always reset the video source to ensure the video reloads properly
+    videoElement.src = videoUrl;
+    videoElement.load(); // Force reload of the video
+
+    // Update the description
+    descriptionElement.textContent = video.description;
+
+    // Automatically play the video
+    videoElement.play().catch(err => console.error("Error playing video: ", err));
+}
 
     // Load the first video initially
     loadVideo(currentIndex);

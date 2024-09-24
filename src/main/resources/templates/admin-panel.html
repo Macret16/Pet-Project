@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        body {
+            width: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0;
+            padding: 2rem;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .admin-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: #ffcc00;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .btn:hover {
+            background-color: #ff9900;
+        }
+
+        .add-button {
+            background-color: #4CAF50;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .add-button:hover {
+            background-color: #45a049;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .update-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .add-form {
+            display: none;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"], input[type="number"] {
+            padding: 10px;
+            width: calc(100% - 22px);
+            margin-bottom: 10px;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<header th:text="${@environment.getProperty('spring.application.name') + ' Admin Panel'}">Admin Panel</header>
+
+<main class="admin-container">
+
+    <section class="admin-section">
+        <h1>Manage Products</h1>
+        <button class="btn add-button" onclick="toggleForm('addProductForm')">Add New Product</button>
+
+        <div class="add-form" id="addProductForm">
+            <h2>Add Product</h2>
+            <form id="productForm">
+                <input type="text" id="productName" placeholder="Product Name" required>
+                <input type="text" id="productCategory" placeholder="Product Category" required>
+                <input type="number" id="productPrice" placeholder="Product Price" required>
+                <button class="btn" type="submit">Submit</button>
+            </form>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Product ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="productTableBody">
+            <!-- Product rows will be populated dynamically -->
+            </tbody>
+        </table>
+    </section>
+
+    <section class="admin-section">
+        <h1>Manage Services</h1>
+        <button class="btn add-button" onclick="toggleForm('addServiceForm')">Add New Service</button>
+
+        <div class="add-form" id="addServiceForm">
+            <h2>Add Service</h2>
+            <form id="serviceForm">
+                <input type="text" id="serviceName" placeholder="Service Name" required>
+                <input type="text" id="serviceDescription" placeholder="Service Description" required>
+                <button class="btn" type="submit">Submit</button>
+            </form>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Service ID</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="serviceTableBody">
+            <!-- Service rows will be populated dynamically -->
+            </tbody>
+        </table>
+    </section>
+
+    <!-- New Section for Managing Roles -->
+    <section class="admin-section">
+        <h1>Manage Roles</h1>
+        <button class="btn add-button" onclick="toggleForm('addRoleForm')">Add New Role</button>
+
+        <div class="add-form" id="addRoleForm">
+            <h2>Add Role</h2>
+            <form id="roleForm">
+                <input type="text" id="roleName" placeholder="Role Name" required>
+                <button class="btn" type="submit">Submit</button>
+            </form>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Role ID</th>
+                <th>Role Name</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="roleTableBody">
+            <!-- Role rows will be populated dynamically -->
+            </tbody>
+        </table>
+    </section>
+
+</main>
+
+<footer>&copy; 2024 Petify. All rights reserved.</footer>
+
+<script>
+    function toggleForm(formId) {
+        const form = document.getElementById(formId);
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // Example: Dynamically populate product data (this would come from your backend)
+    const products = [
+        { id: 1, name: 'Dog Toy', category: 'Toys', price: 12.99 },
+        { id: 2, name: 'Cat Food', category: 'Food', price: 24.99 }
+    ];
+
+    function populateProducts() {
+        const tableBody = document.getElementById('productTableBody');
+        tableBody.innerHTML = ''; // Clear previous data
+        products.forEach(product => {
+            const row = `<tr>
+                <td>${product.id}</td>
+                <td>${product.name}</td>
+                <td>${product.category}</td>
+                <td>$${product.price}</td>
+                <td class="action-buttons">
+                    <button class="btn update-btn">Update</button>
+                    <button class="btn delete-btn">Delete</button>
+                </td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    // Example: Dynamically populate role data (this would come from your backend)
+    const roles = [
+        { id: 1, name: 'Admin' },
+        { id: 2, name: 'Editor' }
+    ];
+
+    function populateRoles() {
+        const tableBody = document.getElementById('roleTableBody');
+        tableBody.innerHTML = ''; // Clear previous data
+        roles.forEach(role => {
+            const row = `<tr>
+                <td>${role.id}</td>
+                <td>${role.name}</td>
+                <td class="action-buttons">
+                    <button class="btn update-btn">Update</button>
+                    <button class="btn delete-btn">Delete</button>
+                </td>
+            </tr>`;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    // Call these functions to initially populate data
+    populateProducts();
+    populateRoles();
+</script>
+
+</body>
+</html>
