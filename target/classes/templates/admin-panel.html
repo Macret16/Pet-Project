@@ -99,14 +99,68 @@
         }
 
         .add-form {
-            display: none;
-            margin-bottom: 20px;
+            background-color: #f9f9f9; /* Light background for contrast */
+            border: 1px solid #ccc; /* Light gray border */
+            border-radius: 8px; /* Rounded corners */
+            padding: 20px; /* Padding inside the form */
+            margin: 20px 0; /* Margin outside the form */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
         }
 
-        input[type="text"], input[type="number"] {
+        .add-form h2 {
+            color: #333; /* Dark gray color for the heading */
+            margin-bottom: 15px; /* Space below the heading */
+            font-size: 24px; /* Font size for the heading */
+        }
+
+        .add-form label {
+            display: block; /* Labels on their own line */
+            margin-bottom: 5px; /* Space between label and input */
+            font-weight: bold; /* Bold labels for emphasis */
+        }
+
+        .add-form input[type="text"],
+        .add-form input[type="number"] {
+            width: 100%; /* Full width for inputs */
+            padding: 10px; /* Padding inside inputs */
+            margin-bottom: 15px; /* Space below inputs */
+            border: 1px solid #ccc; /* Light gray border */
+            border-radius: 4px; /* Slightly rounded corners */
+            font-size: 16px; /* Font size for inputs */
+        }
+
+        .add-form button {
+            background-color: #4CAF50; /* Green background for button */
+            color: white; /* White text for button */
+            padding: 10px 15px; /* Padding inside the button */
+            border: none; /* No border */
+            border-radius: 4px; /* Slightly rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            font-size: 16px; /* Font size for button text */
+        }
+
+        .add-form button:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+
+        .add-form button:disabled {
+            background-color: #ccc; /* Gray background for disabled button */
+            cursor: not-allowed; /* Not allowed cursor */
+        }
+
+
+        input[type="text"], input[type="number"], select {
             padding: 10px;
             width: calc(100% - 22px);
             margin-bottom: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, select:focus {
+            border-color: #007BFF;
+            outline: none;
         }
 
         footer {
@@ -118,6 +172,69 @@
             bottom: 0;
             width: 100%;
         }
+
+        h2 {
+            margin-top: 1.5rem;
+            color: #333;
+        }
+
+        .role-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .role-form select {
+            flex-grow: 1;
+        }
+
+        .role-form button {
+            flex-shrink: 0;
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .role-form button:hover {
+            background-color: #0056b3;
+        }
+
+        /* General button styles */
+        .btn {
+            background-color: #4CAF50; /* Green background */
+            color: white; /* White text */
+            padding: 10px 15px; /* Padding around the text */
+            border: none; /* No border */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s; /* Smooth transition */
+        }
+
+        /* Specific styles for delete button */
+        .delete-btn {
+            background-color: #f44336; /* Red background for delete button */
+        }
+
+        /* Change background color on hover */
+        .btn:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+
+        .delete-btn:hover {
+            background-color: #d32f2f; /* Darker red on hover */
+        }
+
+        /* Style for form to align inline */
+        form {
+            display: inline-block; /* Inline-block to align with other elements */
+        }
+
+        /* Optional: Add margin for better spacing */
+        form {
+            margin-right: 10px; /* Space between buttons */
+        }
     </style>
 </head>
 <body>
@@ -127,16 +244,146 @@
 <main class="admin-container">
 
     <section class="admin-section">
+        <h1>Hospital Management</h1>
+
+        <!-- Add or Update Hospital Form -->
+        <div class="add-form">
+            <h2>Add or Update Hospital</h2>
+            <form action="/hospitals/add" th:object="${hospital}" method="post" enctype="multipart/form-data">
+                <label for="name">Hospital Name:</label>
+                <input type="text" id="name" th:field="*{name}" required>
+
+                <label for="street">Street:</label>
+                <input type="text" id="street" th:field="*{street}" required>
+
+                <label for="city">City:</label>
+                <input type="text" id="city" th:field="*{city}" required>
+
+                <label for="state">State:</label>
+                <input type="text" id="state" th:field="*{state}" required>
+
+                <label for="contact">Contact:</label>
+                <input type="number" id="contact" th:field="*{contact}" required>
+
+                <label for="description">Description:</label>
+                <textarea id="description" th:field="*{description}" required maxlength="100"></textarea>
+
+                <!-- Image upload field -->
+                <label for="image">Hospital Image:</label>
+                <input type="file" id="image" name="hospital_image" accept="image/*" required>
+
+                <button type="submit" class="btn add-button">Add Hospital</button>
+            </form>
+        </div>
+
+        <!-- Display list of hospitals -->
+        <h2>Existing Hospitals</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Street</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="hospital : ${hospitals}">
+                <td th:text="${hospital.name}"></td>
+                <td th:text="${hospital.street}"></td>
+                <td th:text="${hospital.city}"></td>
+                <td th:text="${hospital.state}"></td>
+                <td th:text="${hospital.description}"></td>
+                <td class="action-buttons">
+                    <form th:action="@{hospitals/delete/{id}(id=${hospital.id})}" method="post" style="display:inline;">
+                        <button type="submit" class="btn delete-btn">Delete</button>
+                    </form>
+                    <button class="btn update-btn" th:onclick="'fillUpdateForm(' + ${hospital.id} + ')'">Edit</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="admin-section">
+        <h1>Manage Pet Categories</h1>
+
+        <!-- Add New Category Form -->
+        <div class="add-form" id="addCategoryForm">
+            <h2>Add Pet Category</h2>
+            <form action="/admin/categories/add" method="post">
+                <label>Category Name:</label>
+                <input type="text" name="categoryName" required>
+                <br>
+                <button type="submit">Add Category</button>
+            </form>
+        </div>
+
+        <!-- Delete Category Form -->
+        <div>
+            <h2>Delete Pet Category</h2>
+            <form action="/admin/categories/delete" method="post" style="display:inline;">
+                <label for="categories">Select Category to Delete:</label>
+                <select name="categoryId" id="categories" required>
+                    <option value="">-- Select Category --</option>
+                    <!-- Populate categories dynamically -->
+                    <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                </select>
+                <button type="submit" class="btn delete-btn" onclick="return confirm('Are you sure you want to delete this category?');">Delete</button>
+            </form>
+        </div>
+
+        <!-- Displaying the list of categories in a table -->
+        <table>
+            <thead>
+            <tr>
+                <th>Category ID</th>
+                <th>Name</th>
+            </tr>
+            </thead>
+            <tbody id="categoryTableBody">
+            <tr th:each="category : ${categories}">
+                <td th:text="${category.id}"></td>
+                <td th:text="${category.name}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="admin-section">
         <h1>Manage Products</h1>
         <button class="btn add-button" onclick="toggleForm('addProductForm')">Add New Product</button>
 
-        <div class="add-form" id="addProductForm">
-            <h2>Add Product</h2>
-            <form id="productForm">
-                <input type="text" id="productName" placeholder="Product Name" required>
-                <input type="text" id="productCategory" placeholder="Product Category" required>
-                <input type="number" id="productPrice" placeholder="Product Price" required>
-                <button class="btn" type="submit">Submit</button>
+        <div class="add-form" id="addProductForm" style="display:none;">
+            <h2>Add Pet Product</h2>
+            <form id="addProductFormElement" action="/products/add" method="post" enctype="multipart/form-data">
+                <label>Product Name:</label>
+                <input type="text" name="productName" required>
+                <br>
+                <label>Description:</label>
+                <input type="text" name="description" required>
+                <br>
+                <label>Price:</label>
+                <input type="number" step="0.01" name="price" required>
+                <br>
+                <label>Available Stock:</label>
+                <input type="number" name="availableStock" required>
+                <br>
+                <label>Category:</label>
+                <input type="text" name="category" required>
+                <br>
+                <label>Vendor Name:</label>
+                <input type="text" name="vendorName" required>
+                <br>
+                <label>Vendor Phone:</label>
+                <input type="text" name="vendorPhone" required>
+                <br>
+                <label>Image:</label>
+                <input type="file" name="image" accept="image/*" required>
+                <br>
+                <button type="submit">Add Product</button>
             </form>
         </div>
 
@@ -184,31 +431,63 @@
         </table>
     </section>
 
-    <!-- New Section for Managing Roles -->
+    <!-- New Section for Managing Users and Roles -->
     <section class="admin-section">
-        <h1>Manage Roles</h1>
-        <button class="btn add-button" onclick="toggleForm('addRoleForm')">Add New Role</button>
-
-        <div class="add-form" id="addRoleForm">
-            <h2>Add Role</h2>
-            <form id="roleForm">
-                <input type="text" id="roleName" placeholder="Role Name" required>
-                <button class="btn" type="submit">Submit</button>
-            </form>
-        </div>
+        <h1>Manage Users and Roles</h1>
 
         <table>
             <thead>
             <tr>
-                <th>Role ID</th>
-                <th>Role Name</th>
+                <th>Username</th>
+                <th>Roles</th>
                 <th>Actions</th>
             </tr>
             </thead>
-            <tbody id="roleTableBody">
-            <!-- Role rows will be populated dynamically -->
+            <tbody>
+            <!-- Iterate over users and display them -->
+            <tr th:each="user : ${users}">
+                <td th:text="${user.username}"></td>
+                <td>
+                    <!-- Display each user's roles -->
+                    <span th:each="role : ${user.roles}" th:text="${role.name}"></span>
+                </td>
+                <td>
+                    <!-- Assign role form -->
+                    <form class="role-form" th:action="@{/admin/users/{userId}/roles(userId=${user.id})}" method="post">
+                        <select name="roleName" multiple>
+                            <option th:each="role : ${roles}" th:value="${role.name}" th:text="${role.name}"></option>
+                        </select>
+                        <button type="submit">Assign Role</button>
+                    </form>
+
+                    <!-- Remove role form -->
+                    <form class="role-form" th:action="@{/admin/users/{userId}/roles/remove(userId=${user.id})}" method="post">
+                        <select name="roleId" multiple>
+                            <option th:each="role : ${user.roles}" th:value="${role.id}" th:text="${role.name}"></option>
+                        </select>
+                        <button type="submit">Remove Role</button>
+                    </form>
+                </td>
+            </tr>
             </tbody>
         </table>
+
+        <!-- Add Role Form -->
+        <h2>Add New Role</h2>
+        <form th:action="@{/admin/roles}" method="post">
+            <input type="text" name="roleName" placeholder="Role Name" required>
+            <button class="btn add-button" type="submit">Add Role</button>
+        </form>
+        <form action="/admin/roles/delete" method="post" style="display:inline;">
+            <label for="roles">Select Role to Delete:</label>
+            <select name="roleId" id="roles" required>
+                <option value="">-- Select Role --</option>
+                <!-- Populate roles dynamically -->
+                <option th:each="role : ${roles}" th:value="${role.id}" th:text="${role.name}"></option>
+            </select>
+            <button type="submit" class="btn delete-btn" onclick="return confirm('Are you sure you want to delete this role?');">Delete</button>
+        </form>
+
     </section>
 
 </main>
@@ -221,56 +500,74 @@
         form.style.display = form.style.display === 'none' ? 'block' : 'none';
     }
 
-    // Example: Dynamically populate product data (this would come from your backend)
-    const products = [
-        { id: 1, name: 'Dog Toy', category: 'Toys', price: 12.99 },
-        { id: 2, name: 'Cat Food', category: 'Food', price: 24.99 }
-    ];
+    // Fetch products from the backend (replace with your real backend API)
+    async function fetchProducts() {
+        const response = await fetch('/products/all'); // Adjust endpoint as needed
+        const products = await response.json();
+        populateProducts(products);
+    }
 
-    function populateProducts() {
+    function populateProducts(products) {
         const tableBody = document.getElementById('productTableBody');
-        tableBody.innerHTML = ''; // Clear previous data
+        tableBody.innerHTML = ''; // Clear existing rows
         products.forEach(product => {
             const row = `<tr>
                 <td>${product.id}</td>
-                <td>${product.name}</td>
+                <td>${product.productName}</td>
                 <td>${product.category}</td>
-                <td>$${product.price}</td>
+                <td>${product.price}</td>
                 <td class="action-buttons">
-                    <button class="btn update-btn">Update</button>
-                    <button class="btn delete-btn">Delete</button>
+                    <button class="btn update-btn" onclick="updateProduct(${product.id})">Update</button>
+                    <button class="btn delete-btn" onclick="deleteProduct(${product.id})">Delete</button>
                 </td>
             </tr>`;
             tableBody.innerHTML += row;
         });
     }
 
-    // Example: Dynamically populate role data (this would come from your backend)
-    const roles = [
-        { id: 1, name: 'Admin' },
-        { id: 2, name: 'Editor' }
-    ];
+    // Handle adding new product
+    document.getElementById('addProductFormElement').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent default form submission
+        const formData = new FormData(this);
 
-    function populateRoles() {
-        const tableBody = document.getElementById('roleTableBody');
-        tableBody.innerHTML = ''; // Clear previous data
-        roles.forEach(role => {
-            const row = `<tr>
-                <td>${role.id}</td>
-                <td>${role.name}</td>
-                <td class="action-buttons">
-                    <button class="btn update-btn">Update</button>
-                    <button class="btn delete-btn">Delete</button>
-                </td>
-            </tr>`;
-            tableBody.innerHTML += row;
+        const response = await fetch('/products/add', {
+            method: 'POST',
+            body: formData
         });
+
+        if (response.ok) {
+            alert('Product added successfully!');
+            fetchProducts(); // Refresh the products list
+        } else {
+            alert('Failed to add product.');
+        }
+    });
+
+    // Handle deleting a product
+    async function deleteProduct(productId) {
+        if (confirm("Are you sure you want to delete this product?")) {
+            const response = await fetch(`/products/delete/${productId}`, { method: 'DELETE' });
+            if (response.ok) {
+                alert('Product deleted successfully!');
+                fetchProducts(); // Refresh the products list
+            } else {
+                alert('Failed to delete product.');
+            }
+        }
     }
 
-    // Call these functions to initially populate data
-    populateProducts();
-    populateRoles();
+    // Placeholder for updating a product (could be implemented similarly)
+    function updateProduct(productId) {
+        // This can open a pre-filled form for updating the product
+        alert('Update product functionality coming soon.');
+    }
+
+    function fillUpdateForm(id) {
+        // Fetch the hospital by ID and fill the form for updating (can be done via AJAX)
+    }
+
+    // Call the function to fetch and populate products when the page loads
+    window.onload = fetchProducts;
 </script>
-
 </body>
 </html>

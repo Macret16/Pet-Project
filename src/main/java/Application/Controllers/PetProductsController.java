@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequestMapping("/products")
@@ -21,25 +22,32 @@ public class PetProductsController {
 
     @GetMapping
     public String listProducts(Model model) {
-        model.addAttribute("products", petProductsService.findAll());
+        model.addAttribute("products", petProductsService.getAllProducts());
         return "shopping";
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<PetProducts>> getAllProducts() {
+        return ResponseEntity.ok(petProductsService.getAllProducts());
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+        petProductsService.deleteProduct(id);
+        return ResponseEntity.ok("Product deleted successfully");
     }
 
     @GetMapping("/add")
     public String showAddProductForm(Model model) {
         model.addAttribute("product", new PetProducts());
-        return "addProducts";
+        return "admin-panel";
     }
 
     @PostMapping("/add")
-    public String addProduct(@ModelAttribute PetProducts product, @RequestParam("image") MultipartFile imageFile) {
-        try {
-            petProductsService.saveProduct(product, imageFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Handle error (e.g., redirect to an error page)
-        }
-        return "redirect:/shopping";
+    public String addProduct(@ModelAttribute PetProducts product,
+                             @RequestParam("image") MultipartFile imageFile) throws IOException {
+        petProductsService.saveProduct(product, imageFile);
+        return "redirect:/admin";
     }
 
     @GetMapping("/images/{id}")

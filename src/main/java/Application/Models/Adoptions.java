@@ -18,8 +18,8 @@ public class Adoptions {
     @Column(name = "lane", nullable = false)
     private String lane;
 
-    @Column(name = "pet_type", nullable = false)
-    private String petType;
+    @Column(name = "pet_category", nullable = false)
+    private String petCategory;
 
     @Column(name = "description", nullable = false)
     private String description;
@@ -52,13 +52,13 @@ public class Adoptions {
     }
 
   
-    public Adoptions(Long id, byte[] petPhoto, String lane, String petType, String description, String city,
+    public Adoptions(Long id, byte[] petPhoto, String lane, String petCategory, String description, String city,
 			String state, String pincode, Boolean status, String postedBy, String phoneNumber, Date postDate) {
 		super();
 		this.id = id;
 		this.petPhoto = petPhoto;
 		this.lane = lane;
-		this.petType = petType;
+		this.petCategory = petCategory;
 		this.description = description;
 		this.city = city;
 		this.state = state;
@@ -95,12 +95,12 @@ public class Adoptions {
         this.lane = lane;
     }
 
-    public String getPetType() {
-        return petType;
+    public String getPetCategory() {
+        return petCategory;
     }
 
-    public void setPetType(String petType) {
-        this.petType = petType;
+    public void setPetCategory(String petCategory) {
+        this.petCategory = petCategory;
     }
 
     public String getDescription() {

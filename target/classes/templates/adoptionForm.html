@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adopt a Pet</title>
-     <link rel="stylesheet" th:href="@{/css/navbar.css}"> 
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
 
     <style>
         body {
@@ -21,8 +21,6 @@
             width: 100%;
             box-sizing: border-box;
         }
-
-        
 
         .login-signup {
             background-color: #333;
@@ -82,7 +80,7 @@
 </head>
 <body>
 
- <div th:replace="navbar :: navbar(username=${username})"></div>
+<div th:replace="~{navbar :: navbar(username=${username})}"></div>
 
 <script src="/js/navbar.js"></script>
 
@@ -92,14 +90,11 @@
         <input type="file" id="petPhotoInput" name="petPhoto" accept="image/*" required>
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 
-<label for="petType">Pet Type:</label>
-<select id="petType" name="petType" required onchange="updatePetType()">
-    <option value="" disabled selected>Select a pet type</option>
-    <option th:each="type : ${types}" th:value="${type.id}" th:text="${type.type}"></option>
-</select>
-<input type="hidden" id="selectedPetType" name="selectedPetType" />
-
-
+        <label for="petCategory">Pet Category:</label>
+        <select id="petCategory" name="petCategory" required>
+            <option value="" disabled selected>Select a pet category</option>
+            <option th:each="category : ${categories}" th:value="${category.name}" th:text="${category.name}"></option>
+        </select>
 
         <label for="lane">Lane:</label>
         <input type="text" id="lane" name="lane" required>
@@ -113,8 +108,9 @@
         <label for="pincode">Pincode:</label>
         <input type="text" id="pincode" name="pincode" required>
 
-  		<label for="description">Description:</label>
+        <label for="description">Description:</label>
         <textarea id="description" name="description" rows="4" required></textarea>
+
         <label for="phoneNumber">Phone Number:</label>
         <input type="text" id="phoneNumber" name="phoneNumber" required>
 
@@ -122,17 +118,17 @@
     </form>
 </main>
 
-<script>
-function updatePetType() {
-    const select = document.getElementById('petType');
-    const selectedTypeText = select.options[select.selectedIndex].text; // Get the text
-    document.getElementById('selectedPetType').value = selectedTypeText; // Set hidden input to text
-}
-</script>
-
 <footer>
     &copy; 2024 Petify. All rights reserved.
 </footer>
+
+<script>
+    function updatePetCategory() {
+        const select = document.getElementById('petCategory');
+        const selectedCategoryText = select.options[select.selectedIndex].text; // Get the text
+        document.getElementById('petCategory').value = selectedCategoryText; // Set hidden input to text
+    }
+</script>
 
 </body>
 </html>

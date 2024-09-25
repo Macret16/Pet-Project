@@ -15,18 +15,35 @@ public class PetProductsService {
     @Autowired
     private PetProductsRepository petProductsRepository;
 
-    public PetProducts saveProduct(PetProducts product, MultipartFile imageFile) throws IOException {
+    public void saveProduct(PetProducts product, MultipartFile imageFile) throws IOException {
         if (imageFile != null && !imageFile.isEmpty()) {
             product.setPhoto(imageFile.getBytes());
         }
-        return petProductsRepository.save(product);
-    }
-
-    public List<PetProducts> findAll() {
-        return petProductsRepository.findAll();
+        petProductsRepository.save(product);
     }
 
     public PetProducts findById(Long id) {
         return petProductsRepository.findById(id).orElse(null);
+    }
+
+    public List<PetProducts> getAllProducts() {
+        return petProductsRepository.findAll();
+    }
+
+    public void addProduct(PetProducts productDto) {
+        PetProducts product = new PetProducts();
+        product.setProductName(productDto.getProductName());
+        product.setDescription(productDto.getDescription());
+        product.setPrice(productDto.getPrice());
+        product.setAvailableStock(productDto.getAvailableStock());
+        product.setCategory(productDto.getCategory());
+        product.setVendorName(productDto.getVendorName());
+        product.setVendorPhone(productDto.getVendorPhone());
+        // Handle saving the image (not shown for brevity)
+        petProductsRepository.save(product);
+    }
+
+    public void deleteProduct(Long id) {
+        petProductsRepository.deleteById(id);
     }
 }

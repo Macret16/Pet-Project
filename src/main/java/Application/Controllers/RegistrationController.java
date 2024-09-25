@@ -1,7 +1,9 @@
 package Application.Controllers;
 
+import Application.Models.Role;
 import Application.Models.User;
 import Application.Models.UserForm;
+import Application.Repositories.RoleRepository;
 import Application.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import org.slf4j.Logger;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.slf4j.LoggerFactory;
 
 @Controller
@@ -24,6 +29,8 @@ public class RegistrationController {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired private RoleRepository roleRepository;
 
     @Autowired
     public RegistrationController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
@@ -39,18 +46,20 @@ public class RegistrationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestParam String username, 
-                                           @RequestParam String password, 
-                                           @RequestParam String role) {
+    public ResponseEntity<?> registerUser(@RequestParam String username,
+                                          @RequestParam String password) {
         try {
+            // Fetch the default role (assuming you have a Role repository)
+            Role defaultRole = roleRepository.findRoleByName("USER"); // Create this method in your Role repository
+
             User user = new User();
             user.setUsername(username);
             user.setPassword(passwordEncoder.encode(password)); // Encode the password
-            user.setRoles(role); // Set the role
+            user.setRoles(Set.of(defaultRole)); // Set the default role
             user.setEnabled(true); // Ensure the user is enabled
 
             userRepository.save(user); // Save the user to the database
-            
+
             // Log user details for debugging
             logger.info("User registered: {}", user);
 
@@ -60,6 +69,4 @@ public class RegistrationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Try Another Username"));
         }
     }
-
-    
 }

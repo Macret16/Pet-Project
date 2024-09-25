@@ -2,6 +2,7 @@ package Application.Repositories;
 
 import java.util.Optional;
 
+import Application.Models.Role;
 import Application.Models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -9,3 +10,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
 //    User findByUsername(String username); // Consider changing this to List<User> if necessary
 }
+

@@ -1,11 +1,10 @@
 package Application.Models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -20,18 +19,26 @@ public class User {
 
     private String password;
     private boolean enabled;
-    private String roles; // Field to store user roles
 
-    public User() {}
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
-    public User(String username, String password, boolean enabled, String roles) {
+    public User(Long id, String username, String password, boolean enabled, Set<Role> roles) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.enabled = enabled;
         this.roles = roles;
     }
 
-    // Getters and Setters
+    public User() {
+    }
+
     public Long getId() {
         return id;
     }
@@ -64,11 +71,11 @@ public class User {
         this.enabled = enabled;
     }
 
-    public String getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(String roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 }

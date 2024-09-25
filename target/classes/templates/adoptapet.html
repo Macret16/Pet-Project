@@ -125,12 +125,14 @@
     <h1>Available Pets for Adoption</h1>
 
     <form id="pet-filter-form" action="/adopt" method="get">
-        <label for="pet-type">Select Pet Type:</label>
-        <select id="pet-type" name="type" onchange="submitForm()">
-            <option value="all" th:selected="${type == 'all'}">All</option>
-            <option value="cat" th:selected="${type == 'cat'}">Cats</option>
-            <option value="dog" th:selected="${type == 'dog'}">Dogs</option>
-            <option value="other" th:selected="${type == 'other'}">Others</option>
+        <label for="pet-category">Select Pet Category:</label>
+        <select id="pet-category" name="category" onchange="submitForm()">
+            <option value="all" th:selected="${category == 'all'}">All</option>
+            <option th:each="cat : ${petCategories}"
+                    th:value="${cat.name}"
+                    th:selected="${category != null and category == cat.name}"
+                    th:text="${cat.name}">
+            </option>
         </select>
     </form>
 
@@ -148,8 +150,12 @@
         </div>
     </div>
 </main>
-<script src="/js/navbar.js"></script>
 <footer> &copy; 2024 Petify. All rights reserved. </footer>
-
+<script src="/js/navbar.js"></script>
+<script>
+    function submitForm() {
+        document.getElementById("pet-filter-form").submit();
+    }
+</script>
 </body>
 </html>

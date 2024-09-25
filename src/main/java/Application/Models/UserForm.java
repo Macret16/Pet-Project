@@ -5,6 +5,15 @@ public class UserForm {
     private String username;
     private String password;
 
+    public UserForm(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public UserForm() {
+
+    }
+
     // Getters and setters
     public String getUsername() {
         return username;

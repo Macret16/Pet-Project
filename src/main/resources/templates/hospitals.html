@@ -40,7 +40,7 @@
         }
 
         .hospital img {
-            width: 100%; /* Responsive image width */
+            width: 50%; /* Responsive image width */
             height: auto; /* Maintain aspect ratio */
             border-radius: 8px 8px 0 0; /* Round top corners */
         }
@@ -64,38 +64,21 @@
     </style>
 </head>
 <body>
-    <div th:replace="navbar :: navbar(username=${username})"></div>
-    <script src="/js/navbar.js"></script>
-    
-<!--    <h1>Get Updated Soon...</h1>-->
-    <h1>Hospitals in Your City</h1>
+<!-- Navbar -->
+<div th:replace="~{navbar :: navbar(username=${username})}"></div>
+<script src="/js/navbar.js"></script>
 
-    <div class="hospital-list">
-        <div class="hospital">
-            <img src="image/hos1.jpg" alt="City Hospital">
-            <h2>City Hospital</h2>
-            <p class="address">123, MG Road, Ahmedabad, Gujarat</p>
-            <p class="contact">Contact: +91 98765 43210</p>
-        </div>
-        <div class="hospital">
-            <img src="image/hos2.jpg" alt="General Medical Center">
-            <h2>General Medical Center</h2>
-            <p class="address">456, S.G. Highway, Ahmedabad, Gujarat</p>
-            <p class="contact">Contact: +91 91234 56789</p>
-        </div>
-        <div class="hospital">
-            <img src="image/hos3.jpg" alt="Sunrise Health">
-            <h2>Sunrise Health</h2>
-            <p class="address">789, Naroda Road, Ahmedabad, Gujarat</p>
-            <p class="contact">Contact: +91 99876 54321</p>
-        </div>
-        <div class="hospital">
-            <img src="image/hos4.jpg" alt="Hope Clinic">
-            <h2>Hope Clinic</h2>
-            <p class="address">101, Ashram Road, Ahmedabad, Gujarat</p>
-            <p class="contact">Contact: +91 87654 32109</p>
-        </div>
+<h1>Hospitals in Your City</h1>
+
+<!-- Dynamically display hospitals -->
+<div class="hospital-list">
+    <div class="hospital" th:each="hospital : ${hospitals}">
+        <img th:src="@{/hospitals/images/{id}(id=${hospital.id})}" alt="Hospital Image">
+        <h2 th:text="${hospital.name}">Hospital Name</h2>
+        <p class="address" th:text="${hospital.street + ', ' + hospital.city + ', ' + hospital.state}">Hospital Address</p>
+        <p class="contact">Contact: +91 <span th:text="${hospital.contact}">1234567890</span></p>
     </div>
+</div>
 
 </body>
 </html>

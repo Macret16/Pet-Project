@@ -30,10 +30,11 @@ public class SecurityConfiguration {
         http
             .authorizeHttpRequests(authorizeRequests ->
                 authorizeRequests
-                    .requestMatchers("/register", "/login", "/error", "/", "/about", "/contact", "/successreg", "/explore","/css/**","/js/**").permitAll()
-                    .requestMatchers("/admi").hasRole("ADMIN")
-                    .requestMatchers("/admin/**","/products/**", "/image/**").permitAll()
-                    .requestMatchers("/user").hasAnyRole("ADMIN", "USER")
+                    .requestMatchers("/register", "/login", "/error", "/"
+                            , "/about", "/contact", "/successreg", "/explore","/css/**","/js/**"
+                            , "/products/**", "/image/**","/admin/**").permitAll()
+//                    .requestMatchers("/admin/**").hasRole("ADMIN")
+                    .requestMatchers("/user/**").hasRole("USER")
                     .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf.disable()) // Disable CSRF protection

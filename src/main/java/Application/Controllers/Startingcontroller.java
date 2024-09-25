@@ -5,14 +5,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import Application.Models.Adoptions;
-import Application.Models.PetProducts;
-import Application.Models.Video;
-import Application.Models.pettype;
+import Application.Models.*;
 import Application.Repositories.AdoptionsRepository;
 import Application.Repositories.PetProductsRepository;
-import Application.Repositories.petrepo;
+import Application.Repositories.PetRepository;
 import Application.Services.AdoptionsService;
+import Application.Services.HospitalService;
 import Application.Services.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -46,7 +44,8 @@ public class Startingcontroller {
 	@Autowired
 	private final PetProductsRepository petProductsRepository;
 	@Autowired
-	private petrepo petr;
+	private PetRepository petRepository;
+    @Autowired private HospitalService hospitalService;
 
 	public Startingcontroller(VideoService videoService, PetProductsRepository petProductsRepository) {
 		this.videoService = videoService;
@@ -68,7 +67,7 @@ public class Startingcontroller {
 	}
 
 	@GetMapping("/adopt")
-	public String getAvailableAdoptions(@RequestParam(value = "type", required = false) String type, Model model) {
+	public String getAvailableAdoptions(@RequestParam(value = "category", required = false) String category, Model model) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 		if (authentication != null && authentication.getPrincipal() instanceof User) {
@@ -76,20 +75,27 @@ public class Startingcontroller {
 			model.addAttribute("username", user.getUsername());
 		}
 
+		// Fetch the available adoptions
 		List<Adoptions> availableAdoptions = adoptionsService.getAvailableAdoptions();
 
-		// If type is "all", we don't filter. Otherwise, filter by type.
-		if (type != null && !type.equals("all")) {
+		// Fetch the list of pet categories
+		List<PetCategory> petCategories = petRepository.findAll();
+		model.addAttribute("petCategories", petCategories); // Add categories to model
+
+		// If category is not "all", filter by the selected category
+		if (category != null && !category.equals("all")) {
 			availableAdoptions = availableAdoptions.stream()
-					.filter(adoption -> adoption.getPetType().equalsIgnoreCase(type)).collect(Collectors.toList());
+					.filter(adoption -> adoption.getPetCategory().trim().equalsIgnoreCase(category.trim()))
+					.collect(Collectors.toList());
 		}
 
-		// Add the type to the model
-		model.addAttribute("type", type == null ? "all" : type); // Default to "all" if type is null
-		System.err.println("Again -----" + type);
+		// Add the selected category to the model (default to "all" if no category is selected)
+		model.addAttribute("category", category == null ? "all" : category);
 
+		// Add filtered adoptions to the model
 		model.addAttribute("adoptions", availableAdoptions);
-		return "adoptapet";
+
+		return "adoptapet"; // Name of your Thymeleaf template
 	}
 
 	@GetMapping("/petPhoto/{id}")
@@ -151,14 +157,15 @@ public class Startingcontroller {
 			model.addAttribute("username", username);
 		}
 		model.addAttribute("adoption", new Adoptions());
-		List<pettype> pet_type = petr.findAll();
-		model.addAttribute("types", pet_type);
+		List<PetCategory> petCategories = petRepository.findAll(); // Use a meaningful name for clarity
+		model.addAttribute("categories", petCategories); // Change to "categories" to match the HTML
+
 		return "adoptionForm"; // Name of the HTML file for the adoption form
 	}
 
 	@PostMapping("/donor")
 	public String submitAdoptionForm(@RequestParam("petPhoto") MultipartFile petPhoto,
-			@RequestParam("selectedPetType") String selectedPetType, // Add this line to capture the pet type
+			@RequestParam("petCategory") String petCategory, // Add this line to capture the pet type
 			@RequestParam("lane") String lane, @RequestParam("city") String city, @RequestParam("state") String state,
 			@RequestParam("pincode") String pincode, @RequestParam("description") String description,
 			@RequestParam("phoneNumber") String phoneNumber) {
@@ -191,7 +198,7 @@ public class Startingcontroller {
 				adoption.setPhoneNumber(phoneNumber);
 
 				// Retrieve the pet type and set it to the adoption object
-				adoption.setPetType(selectedPetType);
+				adoption.setPetCategory(petCategory);
 
 				// Save the adoption record
 				adoptionsRepository.save(adoption);
@@ -258,6 +265,9 @@ public class Startingcontroller {
 			User user = (User) authentication.getPrincipal();
 			String username = user.getUsername();
 			model.addAttribute("username", username);
+            // Fetch the list of hospitals from the service layer
+            List<Hospital> hospitals = hospitalService.getAllHospitals();
+            model.addAttribute("hospitals", hospitals); // Add the hospital list to the model
 		}
 		return "hospitals";
 	}
